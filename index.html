@@ -1,0 +1,2458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alumni SMA Memory</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cream: #eee8c8;
+      --cream-2: #e4dbad;
+      --black: #050505;
+      --soft-black: #151515;
+      --brown: #8b6f38;
+      --line: #111111;
+      --white: #ffffff;
+      --shadow: 10px 10px 0 #050505;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--black);
+      overflow-x: hidden;
+      padding-bottom: 0;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    img, video {
+      width: 100%;
+      display: block;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input,
+    textarea {
+      font-family: inherit;
+    }
+
+    .container {
+      width: min(92%, 1220px);
+      margin: auto;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.08;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 5px;
+      background: var(--black);
+      z-index: 9999;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: 0.7s ease;
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== NAVBAR ===== */
+    header {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(92%, 1220px);
+      z-index: 999;
+    }
+
+    .navbar {
+      height: 70px;
+      display: grid;
+      grid-template-columns: 210px 1fr 210px;
+      align-items: center;
+      border: 3px solid var(--black);
+      border-radius: 18px;
+      background: var(--cream);
+      overflow: hidden;
+      box-shadow: 0 12px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .logo-box {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-left: 22px;
+      padding-right: 18px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 3px solid var(--black);
+      border-radius: 12px;
+      background: var(--black);
+      color: var(--cream);
+      font-size: 14px;
+      font-weight: 900;
+      transition: 0.25s;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .logo-text strong {
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .logo-text small {
+      margin-top: 4px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+
+    .logo-box:hover {
+      transform: translateY(-2px);
+    }
+
+    .logo-box:hover .logo-icon {
+      transform: rotate(-8deg) scale(1.06);
+      background: var(--cream);
+      color: var(--black);
+    }
+
+    .logo-box.logo-clicked .logo-icon {
+      transform: rotate(12deg) scale(0.92);
+    }
+
+    .nav-menu {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      list-style: none;
+      background: var(--black);
+      color: var(--white);
+      border-bottom-left-radius: 18px;
+      border-bottom-right-radius: 18px;
+    }
+
+    .nav-menu a {
+      position: relative;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -7px;
+      width: 0;
+      height: 3px;
+      background: var(--cream);
+      transition: 0.25s;
+    }
+
+    .nav-menu a:hover::after,
+    .nav-menu a.active::after {
+      width: 100%;
+    }
+
+    .login-box {
+      display: flex;
+      justify-content: center;
+    }
+
+    .login-box a {
+      padding: 7px 26px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      transition: 0.25s;
+    }
+
+    .login-box a:hover {
+      background: var(--black);
+      color: var(--cream);
+    }
+
+    .menu-btn {
+      display: none;
+      justify-self: end;
+      margin-right: 15px;
+      width: 42px;
+      height: 42px;
+      border: 3px solid var(--black);
+      border-radius: 50%;
+      background: var(--cream);
+      color: var(--black);
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      padding: 125px 0 55px;
+    }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 36px;
+      align-items: stretch;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 630px;
+    }
+
+    .hero-title h1 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(48px, 7vw, 105px);
+      line-height: 0.9;
+      letter-spacing: -4px;
+      text-transform: capitalize;
+      margin-top: 32px;
+      max-width: 760px;
+    }
+
+    .hero-title p {
+      margin-top: 22px;
+      max-width: 620px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #272727;
+    }
+
+    .hero-actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 50px;
+      padding: 13px 22px;
+      border: 3px solid var(--black);
+      border-radius: 16px;
+      background: var(--cream);
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      box-shadow: 5px 5px 0 var(--black);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translate(5px, 5px);
+      box-shadow: 0 0 0 var(--black);
+    }
+
+    .btn-dark {
+      background: var(--black);
+      color: var(--cream);
+    }
+
+    .hero-photo-wide {
+      position: relative;
+      height: 250px;
+      border: 3px solid var(--black);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-top: 34px;
+      background: var(--cream-2);
+    }
+
+    .hero-photo-wide img {
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(1.05) contrast(1.02);
+      transition: 0.5s;
+    }
+
+    .hero-photo-wide:hover img {
+      transform: scale(1.08);
+    }
+
+    .side-label {
+      position: absolute;
+      right: -2px;
+      bottom: 25px;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      padding: 12px 8px;
+      border: 3px solid var(--black);
+      border-radius: 12px 0 0 12px;
+      background: var(--cream-2);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .hero-right {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 24px;
+    }
+
+    .photo-card {
+      position: relative;
+      min-height: 430px;
+      border: 3px solid var(--black);
+      border-radius: 34px;
+      overflow: hidden;
+      background: var(--cream-2);
+      box-shadow: var(--shadow);
+    }
+
+    .photo-card img {
+      height: 100%;
+      object-fit: cover;
+      transition: 0.55s;
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.08);
+    }
+
+    .star-row {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .star-row span {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 3px solid var(--black);
+      border-radius: 50%;
+      background: var(--cream);
+      font-size: 18px;
+    }
+
+    .arrow-up {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      height: 120px;
+      width: 36px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      background: var(--cream-2);
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .circle-stamp {
+      position: absolute;
+      left: -83px;
+      top: 45%;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: var(--black);
+      color: var(--cream);
+      display: grid;
+      place-items: center;
+      border: 4px solid var(--cream);
+      box-shadow: 0 0 0 3px var(--black);
+      animation: spin 13s linear infinite;
+    }
+
+    .circle-stamp strong {
+      width: 75px;
+      height: 75px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--cream);
+      border-radius: 50%;
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.15;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .memo-card {
+      border: 3px solid var(--black);
+      border-radius: 24px;
+      padding: 22px;
+      background: var(--cream-2);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .memo-card h3 {
+      font-size: 21px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .memo-card p {
+      font-size: 14px;
+      font-weight: 600;
+      color: #3a3322;
+      max-width: 490px;
+    }
+
+    .download-mini {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      background: var(--cream);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .running-text {
+      border-top: 3px solid var(--black);
+      border-bottom: 3px solid var(--black);
+      background: var(--black);
+      color: var(--cream);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 14px 0;
+    }
+
+    .running-text div {
+      display: inline-block;
+      min-width: 100%;
+      animation: jalan 18s linear infinite;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    @keyframes jalan {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ===== MUSIC PLAYER ===== */
+    .music-section {
+      padding: 34px 0 20px;
+    }
+
+    .music-card {
+      display: grid;
+      grid-template-columns: 96px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      border: 3px solid var(--black);
+      border-radius: 28px;
+      background: var(--cream-2);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .music-cover {
+      width: 96px;
+      height: 96px;
+      border: 3px solid var(--black);
+      border-radius: 22px;
+      background: var(--black);
+      color: var(--cream);
+      display: grid;
+      place-items: center;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 28px;
+      line-height: 1;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .music-card.playing .music-cover {
+      animation: coverPulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes coverPulse {
+      50% {
+        transform: rotate(-3deg) scale(1.04);
+      }
+    }
+
+    .music-info span {
+      display: inline-block;
+      margin-bottom: 6px;
+      padding: 5px 11px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      background: var(--cream);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .music-info h3 {
+      font-size: clamp(22px, 4vw, 34px);
+      line-height: 1.05;
+      margin-bottom: 5px;
+    }
+
+    .music-info p {
+      font-size: 14px;
+      font-weight: 700;
+      color: #3f3f3f;
+    }
+
+    .music-controls {
+      min-width: 300px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .music-main-control {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .play-btn {
+      width: 54px;
+      height: 54px;
+      border: 3px solid var(--black);
+      border-radius: 50%;
+      background: var(--black);
+      color: var(--cream);
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 5px 5px 0 var(--brown);
+      transition: 0.2s;
+    }
+
+    .play-btn:hover {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 var(--brown);
+    }
+
+    .music-time {
+      font-size: 12px;
+      font-weight: 900;
+      min-width: 86px;
+      text-align: right;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 13px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      background: var(--cream);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .music-progress {
+      width: 0%;
+      height: 100%;
+      background: var(--black);
+      transition: width 0.1s linear;
+    }
+
+    /* ===== SECTION STYLE ===== */
+    section:not(.hero) {
+      padding: 85px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 34px;
+    }
+
+    .section-head span {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 7px 13px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      background: var(--cream-2);
+    }
+
+    .section-head h2 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 0.95;
+      letter-spacing: -2.2px;
+      max-width: 750px;
+    }
+
+    .section-head p {
+      max-width: 430px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #3f3f3f;
+    }
+
+    /* ===== ABOUT ===== */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .about-img {
+      min-height: 420px;
+      border: 3px solid var(--black);
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .about-img img {
+      height: 100%;
+      object-fit: cover;
+      transition: 0.5s;
+    }
+
+    .about-img:hover img {
+      transform: scale(1.08);
+    }
+
+    .about-text {
+      padding: 32px;
+      border: 3px solid var(--black);
+      border-radius: 30px;
+      background: var(--cream-2);
+      box-shadow: var(--shadow);
+    }
+
+    .about-text h3 {
+      font-size: 34px;
+      line-height: 1.1;
+      margin-bottom: 15px;
+    }
+
+    .about-text p {
+      font-size: 16px;
+      font-weight: 600;
+      color: #343434;
+      margin-bottom: 14px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 25px;
+    }
+
+    .stat-card {
+      border: 3px solid var(--black);
+      border-radius: 18px;
+      background: var(--cream);
+      padding: 18px;
+      transition: 0.25s;
+    }
+
+    .stat-card:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+
+    .stat-card h4 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .stat-card p {
+      margin: 8px 0 0;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    /* ===== HORIZONTAL SCROLL ===== */
+    .scroll-wrap {
+      position: relative;
+    }
+
+    .scroll-area {
+      overflow-x: auto;
+      display: flex;
+      gap: 22px;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      padding: 8px 4px 25px;
+      scrollbar-width: none;
+      cursor: grab;
+      touch-action: pan-x;
+    }
+
+    .scroll-area:active {
+      cursor: grabbing;
+    }
+
+    .scroll-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    .slide-btn {
+      position: absolute;
+      top: 44%;
+      transform: translateY(-50%);
+      z-index: 5;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 3px solid var(--black);
+      background: var(--cream);
+      color: var(--black);
+      font-size: 32px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 5px 5px 0 var(--black);
+      transition: 0.2s;
+    }
+
+    .slide-btn:hover {
+      transform: translateY(-50%) translate(5px, 5px);
+      box-shadow: 0 0 0 var(--black);
+    }
+
+    .prev { left: -15px; }
+    .next { right: -15px; }
+
+    /* ===== MEMBERS ===== */
+    .search-box {
+      margin-bottom: 24px;
+      max-width: 430px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 3px solid var(--black);
+      border-radius: 15px;
+      outline: none;
+      background: var(--cream-2);
+      color: var(--black);
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    .member-card {
+      scroll-snap-align: start;
+      flex: 0 0 285px;
+      border: 3px solid var(--black);
+      border-radius: 26px;
+      overflow: hidden;
+      background: var(--cream-2);
+      box-shadow: var(--shadow);
+      transition: 0.28s;
+    }
+
+    .member-card:hover {
+      transform: rotate(-1deg) translateY(-8px);
+    }
+
+    .member-card img {
+      height: 260px;
+      object-fit: cover;
+      border-bottom: 3px solid var(--black);
+      transition: 0.5s;
+    }
+
+    .member-card:hover img {
+      transform: scale(1.08);
+    }
+
+    .member-body {
+      padding: 18px;
+    }
+
+    .member-body h3 {
+      font-size: 21px;
+      margin-bottom: 6px;
+    }
+
+    .role {
+      display: inline-block;
+      padding: 6px 11px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      background: var(--cream);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .member-body p {
+      font-size: 14px;
+      font-weight: 600;
+      color: #3f3f3f;
+      margin-bottom: 5px;
+    }
+
+    .motto {
+      margin-top: 12px;
+      padding: 12px;
+      border: 3px solid var(--black);
+      border-radius: 14px;
+      background: var(--cream);
+      font-size: 13px;
+      font-weight: 700;
+      min-height: 85px;
+    }
+
+    /* ===== GALLERY ===== */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .filter-row button {
+      padding: 10px 16px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      background: var(--cream);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .filter-row button.active,
+    .filter-row button:hover {
+      background: var(--black);
+      color: var(--cream);
+    }
+
+    .gallery-card {
+      scroll-snap-align: start;
+      flex: 0 0 360px;
+      min-height: 295px;
+      border: 3px solid var(--black);
+      border-radius: 26px;
+      overflow: hidden;
+      background: var(--cream-2);
+      box-shadow: var(--shadow);
+      position: relative;
+      cursor: pointer;
+      transition: 0.28s;
+    }
+
+    .gallery-card.wide {
+      flex-basis: 520px;
+    }
+
+    .gallery-card:hover {
+      transform: translateY(-8px) rotate(1deg);
+    }
+
+    .gallery-card img,
+    .gallery-card video {
+      height: 100%;
+      min-height: 295px;
+      object-fit: cover;
+      transition: 0.5s;
+    }
+
+    .gallery-card:hover img,
+    .gallery-card:hover video {
+      transform: scale(1.08);
+      filter: brightness(0.78);
+    }
+
+    .caption {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      padding: 15px;
+      border: 3px solid var(--black);
+      border-radius: 16px;
+      background: var(--cream);
+      transform: translateY(12px);
+      opacity: 0;
+      transition: 0.25s;
+    }
+
+    .gallery-card:hover .caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .caption h3 {
+      font-size: 19px;
+      margin-bottom: 4px;
+    }
+
+    .caption p {
+      font-size: 13px;
+      font-weight: 700;
+      color: #454545;
+    }
+
+    .video-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      padding: 8px 12px;
+      border: 3px solid var(--black);
+      border-radius: 99px;
+      background: var(--cream);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    /* ===== TIMELINE ===== */
+    .timeline {
+      display: grid;
+      gap: 18px;
+      max-width: 920px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .timeline-year {
+      display: grid;
+      place-items: center;
+      border: 3px solid var(--black);
+      border-radius: 20px;
+      background: var(--black);
+      color: var(--cream);
+      font-weight: 900;
+      box-shadow: 5px 5px 0 var(--brown);
+    }
+
+    .timeline-box {
+      padding: 22px;
+      border: 3px solid var(--black);
+      border-radius: 22px;
+      background: var(--cream-2);
+      box-shadow: 5px 5px 0 var(--black);
+      transition: 0.25s;
+    }
+
+    .timeline-box:hover {
+      transform: translateX(8px);
+    }
+
+    .timeline-box h3 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .timeline-box p {
+      font-weight: 600;
+      color: #3f3f3f;
+    }
+
+    /* ===== MESSAGE ===== */
+    .message-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    form,
+    .message-list {
+      padding: 26px;
+      border: 3px solid var(--black);
+      border-radius: 26px;
+      background: var(--cream-2);
+      box-shadow: var(--shadow);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border: 3px solid var(--black);
+      border-radius: 14px;
+      outline: none;
+      background: var(--cream);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-group textarea {
+      min-height: 125px;
+      resize: vertical;
+    }
+
+    .message-card {
+      padding: 15px;
+      border: 3px solid var(--black);
+      border-radius: 16px;
+      background: var(--cream);
+      margin-bottom: 12px;
+      animation: masuk 0.3s ease;
+    }
+
+    @keyframes masuk {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message-card h4 {
+      margin-bottom: 5px;
+    }
+
+    .message-card p {
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    /* ===== MOBILE DOCK ===== */
+    .mobile-dock {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: min(94%, 520px);
+      z-index: 998;
+      display: none;
+      gap: 8px;
+      padding: 9px;
+      border: 3px solid var(--black);
+      border-radius: 24px;
+      background: var(--cream);
+      box-shadow: 7px 7px 0 var(--black);
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .mobile-dock::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mobile-dock a {
+      flex: 0 0 84px;
+      min-height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      transition: 0.2s;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .mobile-dock a::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cream);
+      opacity: 0;
+      transform: translateY(-50%) scale(0);
+      transition: 0.25s;
+    }
+
+    .mobile-dock a.active::before {
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+
+    .mobile-dock a:hover,
+    .mobile-dock a:active {
+      border-color: var(--black);
+    }
+
+    .mobile-dock a.active,
+    .mobile-dock a:active {
+      background: var(--black);
+      color: var(--cream);
+    }
+
+    .to-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 48px;
+      height: 48px;
+      z-index: 997;
+      display: grid;
+      place-items: center;
+      border: 3px solid var(--black);
+      border-radius: 50%;
+      background: var(--cream);
+      color: var(--black);
+      font-size: 24px;
+      font-weight: 900;
+      box-shadow: 5px 5px 0 var(--black);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s;
+    }
+
+    .to-top.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.82);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(100%, 920px);
+      background: var(--cream);
+      border: 3px solid var(--black);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 14px 14px 0 var(--black);
+      position: relative;
+      animation: zoom 0.25s ease;
+    }
+
+    @keyframes zoom {
+      from { transform: scale(0.93); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-media img,
+    .modal-media video {
+      max-height: 70vh;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .modal-text {
+      padding: 20px;
+    }
+
+    .modal-text p {
+      font-weight: 600;
+      color: #444;
+      margin-top: 5px;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 42px;
+      height: 42px;
+      border: 3px solid var(--black);
+      border-radius: 50%;
+      background: var(--cream);
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    footer {
+      padding: 30px 0;
+      border-top: 3px solid var(--black);
+      background: var(--black);
+      color: var(--cream);
+      text-align: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .navbar {
+        grid-template-columns: 180px 1fr 160px;
+      }
+
+      .nav-menu {
+        gap: 20px;
+      }
+
+      .hero-layout,
+      .about-grid,
+      .message-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left {
+        min-height: auto;
+      }
+
+      .circle-stamp {
+        left: 25px;
+        top: -72px;
+      }
+
+      .music-card {
+        grid-template-columns: 84px 1fr;
+      }
+
+      .music-cover {
+        width: 84px;
+        height: 84px;
+        font-size: 24px;
+      }
+
+      .music-controls {
+        grid-column: 1 / -1;
+        min-width: 0;
+      }
+    }
+
+    @media (hover: none) {
+      .caption {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .member-card:hover,
+      .gallery-card:hover,
+      .photo-card:hover img,
+      .hero-photo-wide:hover img,
+      .about-img:hover img {
+        transform: none;
+      }
+
+      .btn:hover,
+      .slide-btn:hover {
+        transform: none;
+      }
+    }
+
+    @media (max-width: 780px) {
+      body {
+        padding-bottom: 96px;
+      }
+
+      header {
+        display: block;
+        top: 10px;
+        width: auto;
+        left: 14px;
+        right: auto;
+        transform: none;
+      }
+
+      .navbar {
+        width: max-content;
+        grid-template-columns: 1fr;
+        height: 54px;
+        background: var(--cream);
+        box-shadow: 5px 5px 0 var(--black);
+        border-radius: 16px;
+      }
+
+      .logo-box {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .logo-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 12px;
+      }
+
+      .logo-text strong {
+        font-size: 15px;
+      }
+
+      .logo-text small {
+        font-size: 8px;
+      }
+
+      .login-box {
+        display: none;
+      }
+
+      .menu-btn {
+        display: none;
+      }
+
+      .nav-menu {
+        display: none;
+      }
+
+      .nav-menu.open {
+        display: flex;
+      }
+
+      .nav-menu a {
+        display: block;
+        padding: 15px;
+        text-align: center;
+        border-radius: 14px;
+        font-size: 14px;
+      }
+
+      .nav-menu a.active,
+      .nav-menu a:active {
+        background: var(--cream);
+        color: var(--black);
+      }
+
+      .nav-menu a::after {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 86px;
+      }
+
+      .hero-title h1 {
+        letter-spacing: -2px;
+        margin-top: 10px;
+      }
+
+      .hero-title p {
+        font-size: 15px;
+      }
+
+      .photo-card {
+        min-height: 390px;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 15px;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .member-card {
+        flex-basis: 82%;
+      }
+
+      .gallery-card,
+      .gallery-card.wide {
+        flex-basis: 88%;
+      }
+
+      .mobile-dock {
+        display: flex;
+      }
+
+      .to-top {
+        bottom: 98px;
+      }
+
+      .modal {
+        align-items: end;
+        padding: 12px;
+      }
+
+      .modal-box {
+        width: 100%;
+        max-height: 88vh;
+        overflow: auto;
+        border-radius: 24px 24px 18px 18px;
+        box-shadow: 0 0 0 var(--black);
+      }
+
+      .modal-media img,
+      .modal-media video {
+        max-height: 58vh;
+      }
+
+      .slide-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 26px;
+      }
+
+      .prev { left: 4px; }
+      .next { right: 4px; }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-year {
+        width: 100px;
+        height: 48px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width: 91%;
+      }
+
+      section:not(.hero) {
+        padding: 68px 0;
+      }
+
+      .hero-title h1 {
+        font-size: 45px;
+      }
+
+      .mobile-dock {
+        width: min(94%, 390px);
+        gap: 7px;
+        padding: 8px;
+      }
+
+      .mobile-dock a {
+        flex-basis: 78px;
+        min-height: 46px;
+        font-size: 10px;
+        border-radius: 14px;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .hero-photo-wide {
+        height: 210px;
+      }
+
+      .photo-card {
+        min-height: 330px;
+      }
+
+      .member-card {
+        flex-basis: 90%;
+      }
+
+      .gallery-card,
+      .gallery-card.wide {
+        flex-basis: 92%;
+      }
+
+      .slide-btn {
+        display: none;
+      }
+
+      .scroll-area {
+        gap: 16px;
+        padding-inline: 2px;
+      }
+
+      .about-text {
+        padding: 22px;
+      }
+
+      .about-text h3 {
+        font-size: 27px;
+      }
+
+      form,
+      .message-list {
+        padding: 20px;
+      }
+
+      .music-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 16px;
+      }
+
+      .music-cover {
+        margin: auto;
+      }
+
+      .music-main-control {
+        justify-content: center;
+      }
+
+      .music-time {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="progress" id="progress"></div>
+
+  <header>
+    <nav class="navbar">
+      <a href="#home" class="logo-box" aria-label="Kembali ke beranda">
+        <span class="logo-icon">AS</span>
+        <span class="logo-text">
+          <strong>AlumniSMA</strong>
+          <small>Memory</small>
+        </span>
+      </a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#about">Tentang</a></li>
+        <li><a href="#members">Anggota</a></li>
+        <li><a href="#gallery">Galeri</a></li>
+        <li><a href="#story">Cerita</a></li>
+      </ul>
+
+      <div class="login-box">
+        <a href="#message">Pesan</a>
+      </div>
+
+      <button class="menu-btn" id="menuBtn">☰</button>
+    </nav>
+  </header>
+
+
+  <nav class="mobile-dock" aria-label="Navigasi bawah mobile">
+    <a href="#home" class="active">Home</a>
+    <a href="#about">Tentang</a>
+    <a href="#members">Anggota</a>
+    <a href="#gallery">Galeri</a>
+    <a href="#story">Cerita</a>
+    <a href="#message">Pesan</a>
+  </nav>
+
+  <button class="to-top" id="toTop" aria-label="Kembali ke atas">↑</button>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-layout">
+        <div class="hero-left reveal">
+          <div class="hero-title">
+            <h1>Dive Into The World Of Alumni!</h1>
+            <p>
+              Website kenangan kelompok pertemanan SMA. Berisi foto, video, cerita kegiatan,
+              dan profil anggota agar momen lama tetap bisa dibuka kembali.
+            </p>
+
+            <div class="hero-actions">
+              <a href="#gallery" class="btn btn-dark">Lihat Galeri</a>
+              <a href="#members" class="btn">Kenali Anggota</a>
+            </div>
+          </div>
+
+          <div class="hero-photo-wide">
+            <img src="assets/foto-kelas.jpg" alt="Foto bersama alumni SMA">
+            <span class="side-label">Create Memories</span>
+          </div>
+        </div>
+
+        <div class="hero-right reveal">
+          <div class="photo-card">
+            <img src="assets/foto-utama.jpg" alt="Foto utama kelompok alumni">
+            <div class="star-row">
+              <span>★</span>
+              <span>★</span>
+            </div>
+            <div class="arrow-up">↑</div>
+            <div class="circle-stamp">
+              <strong>START MEMORY</strong>
+            </div>
+          </div>
+
+          <div class="memo-card">
+            <h3>Alumni Memory Web</h3>
+            <p>
+              Arsip digital sederhana untuk menyimpan perjalanan pertemanan dari masa sekolah
+              sampai menjadi alumni.
+            </p>
+            <a href="#message" class="download-mini">Tulis Pesan ↓</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="running-text">
+      <div>
+        Alumni SMA • Foto Kenangan • Video Bareng • Reuni • Cerita Masa Sekolah • Teman Lama • Alumni SMA • Foto Kenangan • Video Bareng • Reuni • Cerita Masa Sekolah • Teman Lama •
+      </div>
+    </div>
+
+    <section class="music-section" aria-label="Lagu kenangan alumni">
+      <div class="container">
+        <div class="music-card reveal" id="musicCard">
+          <div class="music-cover">AS</div>
+
+          <div class="music-info">
+            <span>Soundtrack Alumni</span>
+            <h3>Selalu Bersama</h3>
+            <p>Maliq &amp; D’Essentials — lagu yang menggambarkan kebersamaan dan kenangan alumni SMA.</p>
+          </div>
+
+          <div class="music-controls">
+            <div class="music-main-control">
+              <button class="play-btn" id="playMusic" type="button" aria-label="Putar lagu">▶</button>
+              <div class="music-time">
+                <span id="currentTime">0:00</span> / <span id="durationTime">0:00</span>
+              </div>
+            </div>
+            <div class="progress-wrap" id="musicProgressWrap" aria-label="Progress lagu">
+              <div class="music-progress" id="musicProgress"></div>
+            </div>
+          </div>
+
+          <audio id="audioPlayer" src="assets/selalu-bersama.mp3" preload="metadata"></audio>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span>Tentang Kami</span>
+            <h2>Cerita lama yang disimpan dengan gaya baru.</h2>
+          </div>
+          <p>
+            Bagian ini bisa kamu isi dengan awal mula kelompok, kelas asal, tahun angkatan,
+            kebiasaan saat SMA, dan alasan kenangan ini ingin dibuat menjadi website.
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-img reveal">
+            <img src="assets/foto-kelas.jpg" alt="Foto kelas alumni">
+          </div>
+
+          <div class="about-text reveal">
+            <h3>Dari teman sekolah menjadi keluarga kecil.</h3>
+            <p>
+              Pertemanan ini bermula dari hal sederhana: duduk di kelas yang sama, sering bercanda,
+              mengerjakan tugas, nongkrong di kantin, dan pulang bareng setelah sekolah.
+            </p>
+            <p>
+              Sekarang semuanya sudah menjadi alumni. Namun, foto, video, dan cerita kecil dari masa SMA
+              tetap layak disimpan agar tidak hilang begitu saja.
+            </p>
+
+            <div class="stat-grid">
+              <div class="stat-card">
+                <h4 data-count="12">0</h4>
+                <p>Anggota</p>
+              </div>
+              <div class="stat-card">
+                <h4 data-count="48">0</h4>
+                <p>Foto</p>
+              </div>
+              <div class="stat-card">
+                <h4 data-count="9">0</h4>
+                <p>Video</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="members">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span>Members</span>
+            <h2>Anggota kelompok alumni.</h2>
+          </div>
+          <p>Geser ke kanan atau kiri untuk melihat semua anggota. Data masih contoh dan bisa diganti.</p>
+        </div>
+
+        <div class="search-box reveal">
+          <input type="text" id="searchMember" placeholder="Cari nama atau julukan anggota...">
+        </div>
+
+        <div class="scroll-wrap reveal">
+          <button class="slide-btn prev" data-target="memberList" data-direction="left">‹</button>
+          <div class="scroll-area" id="memberList"></div>
+          <button class="slide-btn next" data-target="memberList" data-direction="right">›</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span>Gallery</span>
+            <h2>Foto dan video bareng.</h2>
+          </div>
+          <p>Klik foto atau video untuk membuka tampilan lebih besar. Galeri bisa digeser manual atau memakai tombol.</p>
+        </div>
+
+        <div class="filter-row reveal">
+          <button class="active" data-filter="all">Semua</button>
+          <button data-filter="foto">Foto</button>
+          <button data-filter="video">Video</button>
+          <button data-filter="sekolah">Sekolah</button>
+          <button data-filter="reuni">Reuni</button>
+          <button data-filter="jalan">Jalan-jalan</button>
+        </div>
+
+        <div class="scroll-wrap reveal">
+          <button class="slide-btn prev" data-target="galleryList" data-direction="left">‹</button>
+          <div class="scroll-area" id="galleryList"></div>
+          <button class="slide-btn next" data-target="galleryList" data-direction="right">›</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="story">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span>Story</span>
+            <h2>Timeline kenangan.</h2>
+          </div>
+          <p>Ubah isi timeline sesuai momen penting kelompok, misalnya awal kenal, kelulusan, liburan, atau reuni.</p>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item reveal">
+            <div class="timeline-year">2019</div>
+            <div class="timeline-box">
+              <h3>Awal Mulai Dekat</h3>
+              <p>Mulai sering berkumpul karena satu kelas, satu tongkrongan, dan sering mengerjakan tugas bersama.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="timeline-year">2020</div>
+            <div class="timeline-box">
+              <h3>Banyak Kegiatan Sekolah</h3>
+              <p>Dari acara kelas, kegiatan sekolah, sampai kebiasaan bercanda yang akhirnya jadi kenangan.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="timeline-year">2022</div>
+            <div class="timeline-box">
+              <h3>Kelulusan</h3>
+              <p>Setelah lulus, semua mulai punya jalan masing-masing, tetapi komunikasi tetap terjaga.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="timeline-year">2024</div>
+            <div class="timeline-box">
+              <h3>Reuni Kecil</h3>
+              <p>Bertemu kembali untuk mengingat masa SMA dan memperbarui cerita kehidupan masing-masing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="message">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span>Message</span>
+            <h2>Dinding pesan alumni.</h2>
+          </div>
+          <p>Pesan tersimpan di browser dengan localStorage. Cocok untuk demo website statis.</p>
+        </div>
+
+        <div class="message-grid">
+          <form id="messageForm" class="reveal">
+            <div class="form-group">
+              <label for="nameInput">Nama</label>
+              <input type="text" id="nameInput" placeholder="Masukkan nama" required>
+            </div>
+
+            <div class="form-group">
+              <label for="messageInput">Pesan</label>
+              <textarea id="messageInput" placeholder="Tulis pesan atau kenangan singkat..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-dark">Simpan Pesan</button>
+          </form>
+
+          <div class="message-list reveal" id="messageList">
+            <div class="message-card">
+              <h4>Admin</h4>
+              <p>Selamat datang di dinding pesan. Silakan tulis kenangan kalian di sini.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; <span id="year"></span> AlumniSMA. Dibuat untuk menyimpan kenangan bersama.</p>
+    </div>
+  </footer>
+
+  <div class="modal" id="mediaModal">
+    <div class="modal-box">
+      <button class="close-modal" id="closeModal">×</button>
+      <div class="modal-media" id="modalMedia"></div>
+      <div class="modal-text">
+        <h3 id="modalTitle"></h3>
+        <p id="modalDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const members = [
+      {
+        name: 'Andi Pratama',
+        role: 'Si Paling Tenang',
+        age: 21,
+        birth: 'Semarang, 12 Januari 2004',
+        motto: 'Jalani pelan-pelan, yang penting tidak berhenti.',
+        photo: 'assets/anggota-1.jpg'
+      },
+      {
+        name: 'Bunga Lestari',
+        role: 'Si Paling Ceria',
+        age: 21,
+        birth: 'Semarang, 4 Maret 2004',
+        motto: 'Bahagia itu sederhana, asal bersama orang yang tepat.',
+        photo: 'assets/anggota-2.jpg'
+      },
+      {
+        name: 'Raka Saputra',
+        role: 'Si Paling Iseng',
+        age: 22,
+        birth: 'Kendal, 20 Juni 2003',
+        motto: 'Hidup jangan terlalu kaku, nanti cepat retak.',
+        photo: 'assets/anggota-3.jpg'
+      },
+      {
+        name: 'Nadia Putri',
+        role: 'Si Paling Rajin',
+        age: 21,
+        birth: 'Demak, 17 Agustus 2004',
+        motto: 'Usaha hari ini adalah cerita baik untuk masa depan.',
+        photo: 'assets/anggota-4.jpg'
+      },
+      {
+        name: 'Fajar Nugroho',
+        role: 'Si Paling Random',
+        age: 22,
+        birth: 'Semarang, 9 September 2003',
+        motto: 'Kadang rencana terbaik datang dari ide paling spontan.',
+        photo: 'assets/anggota-5.jpg'
+      },
+      {
+        name: 'Salsa Amelia',
+        role: 'Si Paling Peduli',
+        age: 21,
+        birth: 'Salatiga, 2 November 2004',
+        motto: 'Teman baik adalah rumah yang bisa berjalan.',
+        photo: 'assets/anggota-6.jpg'
+      },
+      {
+        name: 'Dito Ramadhan',
+        role: 'Si Paling Santai',
+        age: 22,
+        birth: 'Semarang, 28 Mei 2003',
+        motto: 'Santai bukan berarti tidak serius.',
+        photo: 'assets/anggota-7.jpg'
+      },
+      {
+        name: 'Intan Maharani',
+        role: 'Si Paling Rapi',
+        age: 21,
+        birth: 'Semarang, 11 Desember 2004',
+        motto: 'Kenangan yang baik layak disimpan dengan baik.',
+        photo: 'assets/anggota-8.jpg'
+      }
+    ];
+
+    const galleries = [
+      {
+        title: 'Foto Setelah Ujian',
+        desc: 'Foto bersama setelah ujian semester di depan kelas.',
+        file: 'assets/galeri-1.jpg',
+        type: 'foto',
+        category: 'foto sekolah',
+        wide: true
+      },
+      {
+        title: 'Momen di Kelas',
+        desc: 'Kegiatan sederhana ketika jam kosong.',
+        file: 'assets/galeri-2.jpg',
+        type: 'foto',
+        category: 'foto sekolah',
+        wide: false
+      },
+      {
+        title: 'Video Reuni',
+        desc: 'Pertemuan kembali setelah lama tidak berkumpul.',
+        file: 'assets/video-1.mp4',
+        type: 'video',
+        category: 'video reuni',
+        wide: false
+      },
+      {
+        title: 'Reuni Kecil',
+        desc: 'Ngobrol santai dan membuka cerita lama.',
+        file: 'assets/galeri-3.jpg',
+        type: 'foto',
+        category: 'foto reuni',
+        wide: false
+      },
+      {
+        title: 'Hari Kelulusan',
+        desc: 'Salah satu hari paling berkesan di masa sekolah.',
+        file: 'assets/galeri-4.jpg',
+        type: 'foto',
+        category: 'foto sekolah',
+        wide: true
+      },
+      {
+        title: 'Jalan-jalan Bareng',
+        desc: 'Dokumentasi perjalanan kecil setelah lulus.',
+        file: 'assets/galeri-5.jpg',
+        type: 'foto',
+        category: 'foto jalan',
+        wide: false
+      },
+      {
+        title: 'Video Perpisahan',
+        desc: 'Dokumentasi singkat sebelum menjadi alumni.',
+        file: 'assets/video-2.mp4',
+        type: 'video',
+        category: 'video sekolah',
+        wide: false
+      }
+    ];
+
+    const memberList = document.getElementById('memberList');
+    const galleryList = document.getElementById('galleryList');
+    const searchMember = document.getElementById('searchMember');
+    const navMenu = document.getElementById('navMenu');
+    const menuBtn = document.getElementById('menuBtn');
+    const progress = document.getElementById('progress');
+    const toTop = document.getElementById('toTop');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playMusic = document.getElementById('playMusic');
+    const musicCard = document.getElementById('musicCard');
+    const musicProgress = document.getElementById('musicProgress');
+    const musicProgressWrap = document.getElementById('musicProgressWrap');
+    const currentTime = document.getElementById('currentTime');
+    const durationTime = document.getElementById('durationTime');
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return '0:00';
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return minutes + ':' + secs;
+    }
+
+    playMusic.addEventListener('click', function() {
+      if (audioPlayer.paused) {
+        audioPlayer.play();
+      } else {
+        audioPlayer.pause();
+      }
+    });
+
+    audioPlayer.addEventListener('play', function() {
+      playMusic.textContent = '❚❚';
+      musicCard.classList.add('playing');
+    });
+
+    audioPlayer.addEventListener('pause', function() {
+      playMusic.textContent = '▶';
+      musicCard.classList.remove('playing');
+    });
+
+    audioPlayer.addEventListener('loadedmetadata', function() {
+      durationTime.textContent = formatTime(audioPlayer.duration);
+    });
+
+    audioPlayer.addEventListener('timeupdate', function() {
+      currentTime.textContent = formatTime(audioPlayer.currentTime);
+      const percent = audioPlayer.duration ? (audioPlayer.currentTime / audioPlayer.duration) * 100 : 0;
+      musicProgress.style.width = percent + '%';
+    });
+
+    audioPlayer.addEventListener('ended', function() {
+      playMusic.textContent = '▶';
+      musicCard.classList.remove('playing');
+      musicProgress.style.width = '0%';
+      currentTime.textContent = '0:00';
+    });
+
+    musicProgressWrap.addEventListener('click', function(e) {
+      if (!audioPlayer.duration) return;
+      const rect = musicProgressWrap.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      audioPlayer.currentTime = (clickX / rect.width) * audioPlayer.duration;
+    });
+
+    function renderMembers(keyword = '') {
+      const result = members.filter(function(member) {
+        return member.name.toLowerCase().includes(keyword.toLowerCase()) ||
+               member.role.toLowerCase().includes(keyword.toLowerCase());
+      });
+
+      memberList.innerHTML = '';
+
+      if (result.length === 0) {
+        memberList.innerHTML = '<p style="font-weight:800; padding:20px;">Anggota tidak ditemukan.</p>';
+        return;
+      }
+
+      result.forEach(function(member) {
+        const card = document.createElement('div');
+        card.className = 'member-card';
+        card.innerHTML = `
+          <img src="${member.photo}" alt="Foto ${member.name}">
+          <div class="member-body">
+            <h3>${member.name}</h3>
+            <span class="role">${member.role}</span>
+            <p>${member.age} tahun</p>
+            <p>${member.birth}</p>
+            <div class="motto">“${member.motto}”</div>
+          </div>
+        `;
+        memberList.appendChild(card);
+      });
+    }
+
+    function renderGallery(filter = 'all') {
+      galleryList.innerHTML = '';
+
+      const result = galleries.filter(function(item) {
+        return filter === 'all' || item.category.includes(filter);
+      });
+
+      result.forEach(function(item) {
+        const card = document.createElement('div');
+        card.className = item.wide ? 'gallery-card wide' : 'gallery-card';
+        card.dataset.file = item.file;
+        card.dataset.type = item.type;
+        card.dataset.title = item.title;
+        card.dataset.desc = item.desc;
+
+        const media = item.type === 'video'
+          ? `<video src="${item.file}" muted playsinline></video><span class="video-badge">Video</span>`
+          : `<img src="${item.file}" alt="${item.title}">`;
+
+        card.innerHTML = `
+          ${media}
+          <div class="caption">
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+          </div>
+        `;
+
+        galleryList.appendChild(card);
+      });
+
+      activateModal();
+    }
+
+    renderMembers();
+    renderGallery();
+
+    searchMember.addEventListener('input', function() {
+      renderMembers(searchMember.value);
+    });
+
+    menuBtn.addEventListener('click', function() {
+      navMenu.classList.toggle('open');
+      menuBtn.textContent = navMenu.classList.contains('open') ? '×' : '☰';
+    });
+
+    document.querySelectorAll('.nav-menu a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        navMenu.classList.remove('open');
+        menuBtn.textContent = '☰';
+      });
+    });
+
+    // Efek kecil saat logo diklik supaya terasa seperti logo website pada umumnya.
+    document.querySelector('.logo-box').addEventListener('click', function() {
+      this.classList.add('logo-clicked');
+      setTimeout(() => this.classList.remove('logo-clicked'), 250);
+    });
+
+    window.addEventListener('scroll', function() {
+      const scrollTop = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = height > 0 ? (scrollTop / height) * 100 + '%' : '0%';
+
+      let active = 'home';
+      document.querySelectorAll('main section').forEach(function(section) {
+        if (scrollTop >= section.offsetTop - 140) {
+          active = section.id;
+        }
+      });
+
+      document.querySelectorAll('.nav-menu a, .mobile-dock a').forEach(function(link) {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + active);
+      });
+
+      toTop.classList.toggle('show', scrollTop > 500);
+    });
+
+    toTop.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    const revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+
+    document.querySelectorAll('.reveal').forEach(function(item) {
+      revealObserver.observe(item);
+    });
+
+    const countObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+
+        const el = entry.target;
+        const target = Number(el.dataset.count);
+        let value = 0;
+        const step = Math.max(1, Math.ceil(target / 35));
+
+        const timer = setInterval(function() {
+          value += step;
+          if (value >= target) {
+            value = target;
+            clearInterval(timer);
+          }
+          el.textContent = value;
+        }, 28);
+
+        countObserver.unobserve(el);
+      });
+    }, { threshold: 0.8 });
+
+    document.querySelectorAll('[data-count]').forEach(function(item) {
+      countObserver.observe(item);
+    });
+
+    document.querySelectorAll('.slide-btn').forEach(function(button) {
+      button.addEventListener('click', function() {
+        const target = document.getElementById(button.dataset.target);
+        const distance = button.dataset.direction === 'right' ? 380 : -380;
+
+        target.scrollBy({
+          left: distance,
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    document.querySelectorAll('.scroll-area').forEach(function(area) {
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+
+      function startDrag(x) {
+        isDown = true;
+        startX = x - area.offsetLeft;
+        scrollLeft = area.scrollLeft;
+      }
+
+      function moveDrag(x) {
+        if (!isDown) return;
+        const posisiX = x - area.offsetLeft;
+        const jarak = (posisiX - startX) * 1.25;
+        area.scrollLeft = scrollLeft - jarak;
+      }
+
+      function stopDrag() {
+        isDown = false;
+      }
+
+      area.addEventListener('mousedown', function(e) {
+        startDrag(e.pageX);
+      });
+
+      area.addEventListener('mousemove', function(e) {
+        if (!isDown) return;
+        e.preventDefault();
+        moveDrag(e.pageX);
+      });
+
+      area.addEventListener('mouseup', stopDrag);
+      area.addEventListener('mouseleave', stopDrag);
+
+      area.addEventListener('touchstart', function(e) {
+        startDrag(e.touches[0].pageX);
+      }, { passive: true });
+
+      area.addEventListener('touchmove', function(e) {
+        moveDrag(e.touches[0].pageX);
+      }, { passive: true });
+
+      area.addEventListener('touchend', stopDrag);
+    });
+
+    document.querySelectorAll('.filter-row button').forEach(function(button) {
+      button.addEventListener('click', function() {
+        document.querySelectorAll('.filter-row button').forEach(function(btn) {
+          btn.classList.remove('active');
+        });
+
+        button.classList.add('active');
+        renderGallery(button.dataset.filter);
+      });
+    });
+
+    const mediaModal = document.getElementById('mediaModal');
+    const modalMedia = document.getElementById('modalMedia');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const closeModal = document.getElementById('closeModal');
+
+    function activateModal() {
+      document.querySelectorAll('.gallery-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          const file = card.dataset.file;
+          const type = card.dataset.type;
+          const title = card.dataset.title;
+          const desc = card.dataset.desc;
+
+          modalMedia.innerHTML = type === 'video'
+            ? `<video src="${file}" controls autoplay></video>`
+            : `<img src="${file}" alt="${title}">`;
+
+          modalTitle.textContent = title;
+          modalDesc.textContent = desc;
+          mediaModal.classList.add('show');
+          document.body.classList.add('modal-open');
+        });
+      });
+    }
+
+    function closeGalleryModal() {
+      mediaModal.classList.remove('show');
+      modalMedia.innerHTML = '';
+      document.body.classList.remove('modal-open');
+    }
+
+    closeModal.addEventListener('click', closeGalleryModal);
+
+    mediaModal.addEventListener('click', function(e) {
+      if (e.target === mediaModal) {
+        closeGalleryModal();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeGalleryModal();
+      }
+    });
+
+    const messageForm = document.getElementById('messageForm');
+    const messageList = document.getElementById('messageList');
+
+    function getMessages() {
+      return JSON.parse(localStorage.getItem('alumniMessages')) || [];
+    }
+
+    function saveMessages(data) {
+      localStorage.setItem('alumniMessages', JSON.stringify(data));
+    }
+
+    function cleanText(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function renderMessages() {
+      const messages = getMessages();
+
+      messageList.innerHTML = `
+        <div class="message-card">
+          <h4>Admin</h4>
+          <p>Selamat datang di dinding pesan. Silakan tulis kenangan kalian di sini.</p>
+        </div>
+      `;
+
+      messages.forEach(function(item) {
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.innerHTML = `
+          <h4>${cleanText(item.name)}</h4>
+          <p>${cleanText(item.message)}</p>
+        `;
+        messageList.appendChild(card);
+      });
+    }
+
+    messageForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('nameInput').value.trim();
+      const message = document.getElementById('messageInput').value.trim();
+
+      if (name === '' || message === '') {
+        alert('Nama dan pesan harus diisi.');
+        return;
+      }
+
+      const oldMessages = getMessages();
+      oldMessages.unshift({ name: name, message: message });
+      saveMessages(oldMessages.slice(0, 10));
+      messageForm.reset();
+      renderMessages();
+    });
+
+    renderMessages();
+
+    // Tutup modal dengan gesture swipe ke bawah di mobile
+    let modalStartY = 0;
+    let modalEndY = 0;
+
+    mediaModal.addEventListener('touchstart', function(e) {
+      modalStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    mediaModal.addEventListener('touchmove', function(e) {
+      modalEndY = e.touches[0].clientY;
+    }, { passive: true });
+
+    mediaModal.addEventListener('touchend', function() {
+      if (modalEndY - modalStartY > 90) {
+        closeGalleryModal();
+      }
+      modalStartY = 0;
+      modalEndY = 0;
+    });
+  </script>
+</body>
+</html>
